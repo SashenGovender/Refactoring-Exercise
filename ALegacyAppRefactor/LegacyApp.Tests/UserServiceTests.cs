@@ -1,5 +1,6 @@
 using LegacyApp.Models;
 using LegacyApp.Tests.TestHelpers;
+using LegacyApp.Validators;
 using NSubstitute;
 using NUnit.Framework;
 using System;
@@ -11,7 +12,7 @@ namespace LegacyApp.Tests
   {
     private UserService GetSystemUnderTest(TestDoubles testDoubles)
     {
-      return new UserService(testDoubles.ClientRepository, testDoubles.DateTimeProvider, testDoubles.UserDataAccess, testDoubles.UserCreditService);
+      return new UserService(testDoubles.ClientRepository, new UserValidator(testDoubles.DateTimeProvider), testDoubles.UserDataAccess, testDoubles.UserCreditService);
     }
 
     [TestCase("")]

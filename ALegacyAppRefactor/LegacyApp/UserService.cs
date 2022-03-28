@@ -2,6 +2,7 @@
 using LegacyApp.Models;
 using LegacyApp.Providers;
 using LegacyApp.Repository;
+using LegacyApp.Validators;
 using System;
 
 namespace LegacyApp
@@ -9,44 +10,26 @@ namespace LegacyApp
   public class UserService
   {
     private readonly IClientRepository _clientRepository;
-    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly UserValidator _userValidator;
     private readonly IUserDataAccess _userDataAccess;
     private readonly IUserCreditService _userCreditService;
 
-    public UserService() : this(new ClientRepository(), new DateTimeProvider(), new UserDataAccessProxy(), new UserCreditServiceClient())
+    public UserService() : this(new ClientRepository(), new UserValidator(new DateTimeProvider()), new UserDataAccessProxy(), new UserCreditServiceClient())
     {
 
     }
 
-    public UserService(IClientRepository clientRepository, IDateTimeProvider dateTimeProvider, IUserDataAccess userDataAccess, IUserCreditService userCreditService)
+    public UserService(IClientRepository clientRepository, UserValidator userValidator, IUserDataAccess userDataAccess, IUserCreditService userCreditService)
     {
       _clientRepository = clientRepository;
-      _dateTimeProvider = dateTimeProvider;
+      _userValidator = userValidator;
       _userDataAccess = userDataAccess;
       _userCreditService = userCreditService;
     }
 
     public bool AddUser(string firname, string surname, string email, DateTime dateOfBirth, int clientId)
     {
-      if (string.IsNullOrEmpty(firname) || string.IsNullOrEmpty(surname))
-      {
-        return false;
-      }
-
-      if (email.Contains("@") && !email.Contains("."))
-      {
-        return false;
-      }
-
-      var now = _dateTimeProvider.DateTimeNow;
-      int age = now.Year - dateOfBirth.Year;
-
-      if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day))
-      {
-        age--;
-      }
-
-      if (age < 21)
+      if (!_userValidator.IsUserDetailsValid(firname, surname, email, dateOfBirth))
       {
         return false;
       }
@@ -96,5 +79,7 @@ namespace LegacyApp
 
       return true;
     }
+
+
   }
 }
