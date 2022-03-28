@@ -4,7 +4,7 @@ using System;
 namespace LegacyApp.Tests
 {
   [TestFixture]
-  public class Tests
+  public class UserServiceTests
   {
     private UserService GetSystemUnderTest()
     {
@@ -39,9 +39,7 @@ namespace LegacyApp.Tests
       Assert.IsFalse(result);
     }
 
-    [TestCase("sashengmail.co.za")]
-    [TestCase("sashen@gmail")]
-    [TestCase("sashengmail")]
+    [TestCase("sashen@gmailcoza")]
     public void AddUser_WhenEmailInvalid_ThenShouldReturnFalse(string email)
     {
       // Arrange
@@ -61,7 +59,7 @@ namespace LegacyApp.Tests
       var userService = GetSystemUnderTest();
 
       //Act
-      var result = userService.AddUser(TestConstants.Firname, TestConstants.Surname, email, DateTime.Now, TestConstants.ClientId);
+      var result = userService.AddUser(TestConstants.Firname, TestConstants.Surname, TestConstants.Email, DateTime.Now, TestConstants.ClientId);
 
       //Assert
       Assert.IsFalse(result);
