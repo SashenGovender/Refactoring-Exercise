@@ -2,7 +2,7 @@
 
 namespace LegacyApp.Providers
 {
-  internal interface IDateTimeProvider
+  public interface IDateTimeProvider
   {
     public DateTime DateTimeNow { get; }
   }

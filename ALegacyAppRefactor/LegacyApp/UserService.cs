@@ -18,7 +18,7 @@ namespace LegacyApp
 
     }
 
-    public UserService(IClientRepository clientRepository, DateTimeProvider dateTimeProvider, IUserDataAccess userDataAccess, IUserCreditService userCreditService)
+    public UserService(IClientRepository clientRepository, IDateTimeProvider dateTimeProvider, IUserDataAccess userDataAccess, IUserCreditService userCreditService)
     {
       _clientRepository = clientRepository;
       _dateTimeProvider = dateTimeProvider;
