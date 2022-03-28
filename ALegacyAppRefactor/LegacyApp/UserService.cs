@@ -1,5 +1,6 @@
 ﻿using LegacyApp.DataAccess;
 using LegacyApp.Models;
+using LegacyApp.Repository;
 using System;
 
 namespace LegacyApp
