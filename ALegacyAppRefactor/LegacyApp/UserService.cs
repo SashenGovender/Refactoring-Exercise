@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LegacyApp.DataAccess;
+using LegacyApp.Models;
+using System;
 
 namespace LegacyApp
 {

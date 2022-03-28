@@ -1,8 +1,10 @@
-﻿using System.Configuration;
+﻿using LegacyApp.Enums;
+using LegacyApp.Models;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace LegacyApp
+namespace LegacyApp.Repository
 {
   public class ClientRepository
   {
