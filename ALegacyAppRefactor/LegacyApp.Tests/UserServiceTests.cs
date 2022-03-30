@@ -1,4 +1,4 @@
-using LegacyApp.Models;
+using LegacyApp.Providers.CreditLimit;
 using LegacyApp.Tests.TestHelpers;
 using LegacyApp.Validators;
 using NSubstitute;
@@ -12,7 +12,7 @@ namespace LegacyApp.Tests
   {
     private UserService GetSystemUnderTest(TestDoubles testDoubles)
     {
-      return new UserService(testDoubles.ClientRepository, new UserValidator(testDoubles.DateTimeProvider), testDoubles.UserDataAccess, testDoubles.UserCreditService);
+      return new UserService(testDoubles.ClientRepository, testDoubles.UserDataAccess, new UserValidator(testDoubles.DateTimeProvider), new ClientCreditProviderFactory(testDoubles.UserCreditService));
     }
 
     [TestCase("")]

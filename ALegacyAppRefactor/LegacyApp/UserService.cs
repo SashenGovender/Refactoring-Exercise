@@ -1,6 +1,7 @@
 ﻿using LegacyApp.DataAccess;
 using LegacyApp.Models;
 using LegacyApp.Providers;
+using LegacyApp.Providers.CreditLimit;
 using LegacyApp.Repository;
 using LegacyApp.Validators;
 using System;
@@ -10,21 +11,20 @@ namespace LegacyApp
   public class UserService
   {
     private readonly IClientRepository _clientRepository;
-    private readonly UserValidator _userValidator;
     private readonly IUserDataAccess _userDataAccess;
-    private readonly IUserCreditService _userCreditService;
+    private readonly IClientCreditProviderFactory _clientProviderFactory;
+    private readonly UserValidator _userValidator;
 
-    public UserService() : this(new ClientRepository(), new UserValidator(new DateTimeProvider()), new UserDataAccessProxy(), new UserCreditServiceClient())
+    public UserService() : this(new ClientRepository(), new UserDataAccessProxy(), new UserValidator(new DateTimeProvider()), new ClientCreditProviderFactory(new UserCreditServiceClient()))
     {
-
     }
 
-    public UserService(IClientRepository clientRepository, UserValidator userValidator, IUserDataAccess userDataAccess, IUserCreditService userCreditService)
+    public UserService(IClientRepository clientRepository, IUserDataAccess userDataAccess, UserValidator userValidator, IClientCreditProviderFactory clientProviderFactory)
     {
       _clientRepository = clientRepository;
       _userValidator = userValidator;
       _userDataAccess = userDataAccess;
-      _userCreditService = userCreditService;
+      _clientProviderFactory = clientProviderFactory;
     }
 
     public bool AddUser(string firname, string surname, string email, DateTime dateOfBirth, int clientId)
@@ -45,32 +45,11 @@ namespace LegacyApp
         Surname = surname
       };
 
-      if (client.Name == "VeryImportantClient")
-      {
-        // Skip credit chek
-        user.HasCreditLimit = false;
-      }
-      else if (client.Name == "ImportantClient")
-      {
-        // Do credit check and double credit limit
-        user.HasCreditLimit = true;
+      var clientProvider = _clientProviderFactory.GetClientProvider(client.Name);
+      (user.HasCreditLimit, user.CreditLimit) = clientProvider.GetCreditLimit(user);
 
-        var creditLimit = _userCreditService.GetCreditLimit(user.Firstname, user.Surname, user.DateOfBirth);
-        creditLimit = creditLimit * 2;
-        user.CreditLimit = creditLimit;
 
-      }
-      else
-      {
-        // Do credit check
-        user.HasCreditLimit = true;
-
-        var creditLimit = _userCreditService.GetCreditLimit(user.Firstname, user.Surname, user.DateOfBirth);
-        user.CreditLimit = creditLimit;
-
-      }
-
-      if (user.HasCreditLimit && user.CreditLimit < 500)
+      if (_userValidator.HasLimitAndLessThan500(user))
       {
         return false;
       }
@@ -79,7 +58,6 @@ namespace LegacyApp
 
       return true;
     }
-
 
   }
 }
