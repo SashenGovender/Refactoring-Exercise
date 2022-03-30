@@ -1,4 +1,5 @@
-﻿using LegacyApp.Providers;
+﻿using LegacyApp.Models;
+using LegacyApp.Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +57,10 @@ namespace LegacyApp.Validators
         return false;
       }
       return true;
+    }
+    public bool HasLimitAndLessThan500(User user)
+    {
+      return user.HasCreditLimit && user.CreditLimit < 500;
     }
   }
 }
